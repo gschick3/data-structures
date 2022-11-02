@@ -33,11 +33,11 @@ impl HashMap {
         None
     }
 
-    pub fn insert(&mut self, pair:(String, i32)) {
-        let bucket = Self::hash(&String::from(&pair.0));
-        match self.pairs[bucket].iter().position(|s| s.0 == pair.0) {
-            Some(i) => self.pairs[bucket][i].1 = pair.1,
-            None => self.pairs[bucket].push(pair)
+    pub fn insert(&mut self, key:String, value:i32) {
+        let bucket = Self::hash(&String::from(&key));
+        match self.pairs[bucket].iter().position(|s| s.0 == key) {
+            Some(i) => self.pairs[bucket][i].1 = value,
+            None => self.pairs[bucket].push((key, value))
         }
     }
 
@@ -66,23 +66,23 @@ mod tests {
     #[test]
     fn get_exists() {
         let mut h = HashMap::new();
-        h.insert((String::from("abc"), 4));
+        h.insert(String::from("abc"), 4);
         assert_eq!(h.get(String::from("abc")).unwrap(), 4);
     }
 
     #[test]
     fn get_not_exist() {
         let mut h = HashMap::new();
-        h.insert((String::from("abc"), 4));
+        h.insert(String::from("abc"), 4);
         assert_eq!(h.get(String::from("abb")), None);
     }
 
     #[test]
     fn insert_key() {
         let mut h = HashMap::new();
-        h.insert((String::from("abc"), 4));
-        h.insert((String::from("abc"), 6));
-        h.insert((String::from("abb"), 10));
+        h.insert(String::from("abc"), 4);
+        h.insert(String::from("abc"), 6);
+        h.insert(String::from("abb"), 10);
 
         for key in h.get_keys() {
             assert_ne!(h.get(key), None);
