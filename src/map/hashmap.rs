@@ -13,35 +13,35 @@ impl HashMap {
         }
     }
     
-    pub fn get_keys(&self) -> Vec<String> {
+    pub fn get_keys(&self) -> Vec<&str> {
         let mut keys = vec![];
         for v in &self.pairs {
             for k in v {
-                keys.push(String::from(&k.0));
+                keys.push(k.0.as_str());
             }
         }
         keys
     }
 
-    pub fn get(&self, key:String) -> Option<i32> {
-        let bucket = Self::hash(&String::from(&key));
+    pub fn get(&self, key:&str) -> Option<i32> {
+        let bucket = Self::hash(key);
         for pair in &self.pairs[bucket] {
-            if pair.0 == key {
+            if pair.0.as_str() == key {
                 return Some(pair.1);
             }
         }
         None
     }
 
-    pub fn insert(&mut self, key:String, value:i32) {
-        let bucket = Self::hash(&String::from(&key));
-        match self.pairs[bucket].iter().position(|s| s.0 == key) {
+    pub fn insert(&mut self, key:&str, value:i32) {
+        let bucket = Self::hash(key);
+        match self.pairs[bucket].iter().position(|s| s.0.as_str() == key) {
             Some(i) => self.pairs[bucket][i].1 = value,
-            None => self.pairs[bucket].push((key, value))
+            None => self.pairs[bucket].push((String::from(key), value))
         }
     }
 
-    fn hash(key:&String) -> usize {
+    fn hash(key:&str) -> usize {
         let mut n:u32 = 0;
         key.chars().for_each(|c| n += c as u32);
         n as usize % 16
@@ -60,29 +60,29 @@ mod tests {
 
     #[test]
     fn hash_char() {
-        assert_eq!(HashMap::hash(&String::from("a")), 97 % 16);
+        assert_eq!(HashMap::hash("a"), 97 % 16);
     }
 
     #[test]
     fn get_exists() {
         let mut h = HashMap::new();
-        h.insert(String::from("abc"), 4);
-        assert_eq!(h.get(String::from("abc")).unwrap(), 4);
+        h.insert("abc", 4);
+        assert_eq!(h.get("abc").unwrap(), 4);
     }
 
     #[test]
     fn get_not_exist() {
         let mut h = HashMap::new();
-        h.insert(String::from("abc"), 4);
-        assert_eq!(h.get(String::from("abb")), None);
+        h.insert("abc", 4);
+        assert_eq!(h.get("abb"), None);
     }
 
     #[test]
     fn insert_key() {
         let mut h = HashMap::new();
-        h.insert(String::from("abc"), 4);
-        h.insert(String::from("abc"), 6);
-        h.insert(String::from("abb"), 10);
+        h.insert("abc", 4);
+        h.insert("abc", 6);
+        h.insert("abb", 10);
 
         for key in h.get_keys() {
             assert_ne!(h.get(key), None);
