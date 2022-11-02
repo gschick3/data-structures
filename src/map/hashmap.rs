@@ -80,14 +80,15 @@ mod tests {
     #[test]
     fn insert_key() {
         let mut h = HashMap::new();
-        h.insert("abc", 4);
-        h.insert("abc", 6);
-        h.insert("abb", 10);
+        h.insert("one", 4);
+        h.insert("two", 6);
+        h.insert("three", 10);
 
         for key in h.get_keys() {
             assert_ne!(h.get(key), None);
         }
 
-        assert_eq!(h.get_keys(), vec![String::from("abb"), String::from("abc")]);
+        let keys = ["one", "two", "three"];
+        assert!(h.get_keys().iter().all(|k| keys.contains(k)));
     }
 }
