@@ -7,10 +7,18 @@ pub struct HashMap {
 }
 
 impl HashMap {
-    pub fn new() -> HashMap {
+    pub fn new() -> Self {
         HashMap {
             pairs: vec![vec![]; BUCKETS]
         }
+    }
+
+    pub fn from(pairs:Vec<(&str, i32)>) -> Self {
+        let mut h = HashMap::new();
+        for pair in pairs {
+            h.insert(pair.0, pair.1);
+        }
+        h
     }
     
     pub fn get_keys(&self) -> Vec<&str> {
@@ -48,6 +56,7 @@ impl HashMap {
     }
 }
 
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -64,19 +73,12 @@ mod tests {
     }
 
     #[test]
-    fn get_exists() {
-        let mut h = HashMap::new();
-        h.insert("abc", 4);
-        assert_eq!(h.get("abc").unwrap(), 4);
+    fn hashmap_from() {
+        let h = HashMap::from(vec![("a",1), ("b",2), ("c", 3)]);
+        let keys = ["a", "b", "c"];
+        assert!(h.get_keys().iter().all(|k| keys.contains(k)));
     }
-
-    #[test]
-    fn get_not_exist() {
-        let mut h = HashMap::new();
-        h.insert("abc", 4);
-        assert_eq!(h.get("abb"), None);
-    }
-
+    
     #[test]
     fn insert_key() {
         let mut h = HashMap::new();
@@ -84,11 +86,21 @@ mod tests {
         h.insert("two", 6);
         h.insert("three", 10);
 
-        for key in h.get_keys() {
-            assert_ne!(h.get(key), None);
-        }
-
         let keys = ["one", "two", "three"];
         assert!(h.get_keys().iter().all(|k| keys.contains(k)));
+    }
+
+    #[test]
+    fn get_exists() {
+        let mut h = HashMap::new();
+        h.insert("abc", 4);
+        assert_eq!(h.get("abc"), Some(4));
+    }
+
+    #[test]
+    fn get_not_exist() {
+        let mut h = HashMap::new();
+        h.insert("abc", 4);
+        assert_eq!(h.get("abb"), None);
     }
 }
